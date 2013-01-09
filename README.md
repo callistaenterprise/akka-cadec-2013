@@ -108,7 +108,7 @@ Notera att databasen ibland missar att spara logg-meddelanden och fel uppstår. 
 
 På agent-sidan vill vi köra strategin "let it crash", alltså om databasen returnerar ett fel ska DatabaseWorkern starta om men inte påverka LogServer-actorn.
 
-Vi vill dels sätta en strategi på servern om att DatabaseWorkern ska startas om varje gång ett DatabaseFailureException kasats genom att ange följande i LogServer-actorn:
+Vi vill dels sätta en strategi på servern om att DatabaseWorkern ska startas om varje gång ett DatabaseFailureException kastats genom att ange en supervisorStrategy.
 
 Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om loggmeddelanden. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer.
 
