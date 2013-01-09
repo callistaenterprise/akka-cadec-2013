@@ -55,12 +55,12 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
 ### 1. Uppdatera LogServer-agenten
-1.  Skapa StatusCounter-actors för varje typ av HTTP-status (Success, ClientFailure och ServerFailure)
+1.  Skapa StatusCounter-actors för varje typ av HTTP-status (Success, ClientError och ServerError)
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
     1. Success om HTTP-status är 200
     2. ClientFailure om HTTP-status är 400-499
-    3. ServerFailure om HTTP-status är 500-599
+    3. ServerFailure om HTTP-status är 500 eller över
 
 ### 2. Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
