@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>Log analyzer</title>
+<style>
+*{margin:0; padding:0;}
+html{height: 90%;background:#efefef}
+body{font-size: 24px; font-family:helvetica,sans serif;color:#333;height:90%;}
+#debug{position:absolute;top:0px;right:0px;font-size:16px;color:#ccc;}
+#container{width:90%;margin:50px;}
+
+.state {float:left;width:33%;font-weight:bold;text-align:center;}
+.count{margin:10px;font-size:150px;}
+#success {color: #0d0;}
+#clientError {color: #dd0;}
+#serverError {color: #f00;}
+
+</style>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script type="text/javascript">
+  (function(jq){
+    
+     var host = "ws://localhost:8080/socket";
+     
+     var supported = function() { return window.WebSocket || window.MozWebSocket; }
+      
+     var newWebSocket = function(uri) { return window.WebSocket ?
+       new WebSocket(uri) : new MozWebSocket(uri)
+     }
+     
+     var debug = function(msg) { $("#debug").html(msg); }
+     
+     var count = function(e) { 
+          var event = jq.parseJSON(e.data);
+          var status = event.status;
+          var count = event.count;
+          $("#" + status).html(count);
+     }
+
+     var createSocket = function(uri) {
+       if(supported()) {
+         socket = newWebSocket(uri);
+         socket.onmessage = function(e) { debug(e.data); count(e); }
+         socket.onopen = function(e) { debug('connection open') }
+         socket.onclose = function(e) { debug('connection closed'); }
+       } else {
+         alert("your browser does not support web sockets. try chrome.");
+       }
+     }
+
+     createSocket(host);
+      
+   })(jQuery);
+</script>
+
+</head>
+
+<body>
+
+<div id="debug"></div>
+</body>
+
+<div id="container">
+  <div class="state">
+    <h1>Success</h1>
+    <div id="success" class="count">0</div>
+  </div>
+  <div class="state">
+    <h1>Client error</h1>
+    <div id="clientError" class="count">0</div>
+  </div>
+  <div class="state">
+    <h1>Server error</h1>
+    <div id="serverError" class="count">0</div>
+  </div>
+</div>
+
+</html>
