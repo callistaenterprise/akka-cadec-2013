@@ -32,8 +32,16 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
  */
 class LogAgent(host: String, server: ActorRef) extends Actor with ActorLogging {
 
+  var sequence = 0
+  
   def receive = {
-    case None => //ersätt denna rad med en korrekt pattern matching
+    case log: AccessLog => processLog(log) 
   }
   
+  def processLog (log: AccessLog) {
+    sequence = sequence + 1
+    val id = sequence 
+    
+    server ! LogMessage(host, id, log) 
+  }
 }

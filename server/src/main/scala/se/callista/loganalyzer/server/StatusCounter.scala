@@ -17,7 +17,7 @@ import se.callista.loganalyzer.{Count, HttpStatus, LogMessage}
 class StatusCounter(status: HttpStatus, presenter: ActorRef) extends Actor with ActorLogging {
 
   def receive = {
-    case None => //ersätt denna rad med en korrekt pattern matching 
+    case None => //ersätt denna rad med en korrekt pattern matching av objekt 
   }
   
 }

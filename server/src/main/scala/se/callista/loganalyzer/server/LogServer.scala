@@ -23,7 +23,7 @@ import se.callista.loganalyzer._
 class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
   
   def receive = {
-    case None => //ersätt denna rad med en korrekt pattern matching
+    case logMessage: LogMessage => log.info("received: " + logMessage)
   }
   
 }
