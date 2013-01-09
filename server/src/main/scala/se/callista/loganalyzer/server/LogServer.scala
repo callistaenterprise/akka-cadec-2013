@@ -26,10 +26,13 @@ class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
   val clientErrorCounter = context.actorOf(Props(new StatusCounter(ClientError, presenter)), "clientErrorCounter")
   val serverErrorCounter = context.actorOf(Props(new StatusCounter(ServerError, presenter)), "serverErrorCounter")
   
+  val databaseWorker = context.actorOf(Props[DatabaseWorker], "databaseWorker")
+  
   def receive = {
     case logMessage: LogMessage => {
       log.info("received: " + logMessage)
       count(logMessage)
+      databaseWorker.forward(logMessage)
     }
   }
   

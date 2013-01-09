@@ -17,7 +17,9 @@ class DatabaseWorker extends Actor with ActorLogging {
   val database: Database = UnstableDatabase
 
   def receive = {
-    case None => //ersätt denna rad med en korrekt pattern matching
+    case LogMessage(host, id, log) => {
+      database.save(host, id, log)
+      sender ! ConfirmationMessage(id)
+    }
   }
-  
 }
