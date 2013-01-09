@@ -35,11 +35,11 @@ Använd följande kommando för att verifiera att LogServer tar emot LogMessage-
 
 ### 3. Testa hela flödet
 
-Skapa först start-script genom att köra kommandot: sbt start-script
+Skapa först start-script genom att köra kommandot: `sbt start-script`
 
-Starta sedan servern i ett terminal-fönster med kommandot: sbt server/target/start (windows: )
+Starta sedan servern i ett terminal-fönster med kommandot: `server/target/start` (windows: )
 
-Starta sedan agenten i ett annat terminal-fönster med kommandot: sbt agent/target/start (windows: )
+Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/start` (windows: )
 
 Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera i terminalen på för servern att meddelanden kommer fram.
 
@@ -57,9 +57,10 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 ### 1. Uppdatera LogServer-agenten
 1.  Skapa StatusCounter-actors för varje typ av HTTP-status (Success, ClientFailure och ServerFailure)
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
-2.1.  Success om HTTP-status är 200
-2.2.  ClientFailure om HTTP-status är 400-499
-2.3.   ServerFailure om HTTP-status är 500-599
+
+    1. Success om HTTP-status är 200
+    2. ClientFailure om HTTP-status är 400-499
+    3. ServerFailure om HTTP-status är 500-599
 
 ### 2. Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
@@ -67,16 +68,16 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 3.  Skapa ett Count-objekt och skicka till presenter-actorn
 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
-sbt 'test-only se.callista.loganalyzer.server.StatusCounterSuite'
+`sbt 'test-only se.callista.loganalyzer.server.StatusCounterSuite'`
  
 ### 3. Testa hela flödet
 
 Kompilera genom att köra kommandot: `sbt compile`
 
-Starta återigen servern med: sbt server/target/start (windows: )
-...och agenten med: sbt agent/target/start (windows: )
+Starta återigen servern med: `server/target/start` (windows: )
+...och agenten med: `agent/target/start` (windows: )
 
-Gå in på http://localhost:8080 och verifiera att siffrorna räknar upp
+Gå in på [localhost:8080](http://localhost:8080) och verifiera att siffrorna räknar upp
 
 
 Uppgift 3: Spara logg-meddelanden till databasen:
@@ -90,7 +91,7 @@ Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då data
 3.  Skicka tillbaks ett bekräftelsemeddelande(ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
 
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
-sbt 'test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'
+`sbt 'test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
 ### 2. Uppdatera LogServer
 1.  Skapa en DatabaseWorker-actor
@@ -99,7 +100,7 @@ sbt 'test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'
 ### 3. Testa hela flödet
 Kompilera om och starta server och agent igen. 
 
-Gå in på localhost:8080 och ladda om logg-listan för att se att denna uppdateras(?)
+Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras(?)
 
 Uppgift 4: Hantera fel
 ---------------------
