@@ -47,7 +47,7 @@ Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddel
 Uppgift 2: Räkna olika typer av loggar beroende på HTTP Status.
 ---------------------
 
-I AccessLog-objektet anges den HTTP Status[http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html] som varje anrop har. 
+I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) som varje anrop har. 
   - Om HTTP status är 200 betyder detta att anropet gått bra
   - Om HTTP status börjar på 400 betyder detta att anropet misslyckats p.g.a ett klientfel, t.ex 404 om klienten försöker nå en resurs som inte finns.
   - Om HTTP status börjar på 500 betyder detta att ett fel uppstod på servern.
