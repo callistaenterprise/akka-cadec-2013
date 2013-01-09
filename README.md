@@ -59,8 +59,8 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
     1. Success om HTTP-status är 200
-    2. ClientFailure om HTTP-status är 400-499
-    3. ServerFailure om HTTP-status är 500 eller över
+    2. ClientError om HTTP-status är 400-499
+    3. ServerError om HTTP-status är 500 eller över
 
 ### 2. Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
