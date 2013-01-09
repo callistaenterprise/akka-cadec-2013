@@ -22,8 +22,21 @@ import se.callista.loganalyzer._
  */
 class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
   
+  val successCounter = context.actorOf(Props(new StatusCounter(Success, presenter)), "successCounter")
+  val clientErrorCounter = context.actorOf(Props(new StatusCounter(ClientError, presenter)), "clientErrorCounter")
+  val serverErrorCounter = context.actorOf(Props(new StatusCounter(ServerError, presenter)), "serverErrorCounter")
+  
   def receive = {
-    case logMessage: LogMessage => log.info("received: " + logMessage)
+    case logMessage: LogMessage => {
+      log.info("received: " + logMessage)
+      count(logMessage)
+    }
+  }
+  
+  def count(logMessage: LogMessage) = logMessage match {
+    case LogMessage(_, _, a: AccessLog) if(a.statusCode == 200) => successCounter ! logMessage
+    case LogMessage(_, _, a: AccessLog) if(a.statusCode >= 400 && a.statusCode < 500) => clientErrorCounter ! logMessage
+    case LogMessage(_, _, a: AccessLog) if(a.statusCode >= 500) => serverErrorCounter ! logMessage
   }
   
 }
