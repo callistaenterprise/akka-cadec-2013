@@ -33,15 +33,34 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
 class LogAgent(host: String, server: ActorRef) extends Actor with ActorLogging {
 
   var sequence = 0
+  val logs = Map[Int, AccessLog]()
+
+  val scheduler = context.system.scheduler.schedule(2 seconds, 2 seconds, self, HandleUnprocessedLogs)
   
   def receive = {
-    case log: AccessLog => processLog(log) 
+    case log: AccessLog => processLog(log)
+    case ConfirmationMessage(id) => handleProcessedLog(id)
+    case HandleUnprocessedLogs => handleUnprocessedLogs()
   }
   
   def processLog (log: AccessLog) {
     sequence = sequence + 1
     val id = sequence 
+    logs += id -> log
     
     server ! LogMessage(host, id, log) 
   }
+  
+  def handleProcessedLog(id: Int) {
+    log.info("Processed log: {}", id)
+    logs -= id
+  }
+  
+  def handleUnprocessedLogs() {
+    log.info("Resend unprocessed logs: {}", logs.keys.mkString(", "))
+    logs.keys.foreach { k => server ! LogMessage(host, k, logs(k)) }
+    // alt2: logs.foreach { case (k, v) => server ! LogMessage(host, k, v) }
+    // alt3: for ((k, v) <- logs) { server ! LogMessage(host, k, v) }
+  }
+  
 }

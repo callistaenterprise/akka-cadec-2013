@@ -22,6 +22,10 @@ import se.callista.loganalyzer._
  */
 class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
   
+  override val supervisorStrategy = OneForOneStrategy() {
+    case d: DatabaseFailureException => Restart
+  }
+  
   val successCounter = context.actorOf(Props(new StatusCounter(Success, presenter)), "successCounter")
   val clientErrorCounter = context.actorOf(Props(new StatusCounter(ClientError, presenter)), "clientErrorCounter")
   val serverErrorCounter = context.actorOf(Props(new StatusCounter(ServerError, presenter)), "serverErrorCounter")
