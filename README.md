@@ -68,7 +68,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 3.  Skapa ett Count-objekt och skicka till presenter-actorn
 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
-`sbt 'test-only se.callista.loganalyzer.server.StatusCounterSuite'`
+`sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
  
 ### 3. Testa hela flödet
 
@@ -91,7 +91,7 @@ Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då data
 3.  Skicka tillbaks ett bekräftelsemeddelande(ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
 
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
-`sbt 'test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
+`sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
 ### 2. Uppdatera LogServer
 1.  Skapa en DatabaseWorker-actor
@@ -113,7 +113,7 @@ Vi vill dels sätta en strategi på servern om att DatabaseWorkern ska startas o
 Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om loggmeddelanden. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer.
 
 Använd följande kommando för att verifiera att LogAgent skickar om meddelanden inom fem sekunder:
-`sbt 'test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
+`sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
 
 
 
@@ -125,7 +125,7 @@ Uppgift 5: Räkna inte omsändningar av logg-meddelanden
 Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste hanteras "idempotent", alltså varje loggmeddelande får bara räknas en gång. Utgå ifrån att ett loggmeddelandes nyckel [hostnamn + id] är unikt.
 
 Använd följande kommando för att verifiera att StatusCountern nu inte räknar upp samma loggmeddelande två gånger:
-`sbt 'test-only se.callista.loganalyzer.server.StatusCounterIdempotentSuite'`
+`sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterIdempotentSuite'`
 
 
 
