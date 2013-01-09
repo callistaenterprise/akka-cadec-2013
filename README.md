@@ -100,7 +100,7 @@ Använd följande kommando för att verifiera att DatabaseWorkern fungerar som f
 ### 3. Testa hela flödet
 Kompilera om och starta server och agent igen. 
 
-Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras(?)
+Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras.
 
 Uppgift 4: Hantera fel
 ---------------------
