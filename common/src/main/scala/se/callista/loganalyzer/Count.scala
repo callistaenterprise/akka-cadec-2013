@@ -4,8 +4,6 @@ case class Count(
   status: HttpStatus,
   count: Int) {
 
-//  override def toString = "status: %s, count: %s" format (status, count)
-
   def toJson = "{ \"status\":\"%s\", \"count\": %s }".format(status, count)
   
 }

@@ -14,6 +14,7 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
  *    Tips: 
  *      - Då meddelanden hanteras seriellt i en actor behöver man inte
  *        oroa sig för att göra variabler trådsäkra, de kan alltså vara "mutable".
+ *      - i++ fungerar inte i skala, använd 'i += 1' eller 'i = i + 1'
  * 3. Skicka logg-meddelandet till servern
  * 
  * UPPGIFT 4:
@@ -26,11 +27,11 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
  *      - En mutable map finns under scala.collection.mutable.Map:
  *          Lägg till element: map += key -> value
  *          Ta bort element: map -= key
- *      - För att köra en metod på alla element i en lista kan foreach användas. 
- *        T.ex "collection.foreach { x -> println(x) }"
+ *      - För att köra en metod på alla element i en map kan foreach användas. 
+ *        T.ex "map.foreach { case (k, v) => funktion(v) }"
  * 
  */
-class LogAgent(host: String, server: ActorRef) extends Actor with ActorLogging {
+class LogAgent(hostname: String, server: ActorRef) extends Actor with ActorLogging {
 
   var sequence = 0
   
@@ -39,9 +40,13 @@ class LogAgent(host: String, server: ActorRef) extends Actor with ActorLogging {
   }
   
   def processLog (log: AccessLog) {
-    sequence = sequence + 1
+    sequence += 1
     val id = sequence 
     
-    server ! LogMessage(host, id, log) 
+    sendLog(id, log) 
+  }
+  
+  def sendLog(id: Int, log: AccessLog) {
+    server ! LogMessage(hostname, id, log)
   }
 }
