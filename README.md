@@ -111,13 +111,16 @@ Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att log
 
 Uppgift 4: Hantera fel
 ---------------------
-Notera att databasen ibland missar att spara logg-meddelanden och fel uppstår. Detta vill vi kunna hantera på ett .
+Notera att databasen ibland missar att spara logg-meddelanden och fel uppstår. Detta vill vi kunna hantera.
 
-På agent-sidan vill vi köra strategin "let it crash", alltså om databasen returnerar ett fel ska DatabaseWorkern starta om men inte påverka LogServer-actorn.
+På servern vill vi tillämpa strategin "let it crash". Det innebär att om databasen returnerar ett fel ska vi helt enkelt starta om DatabaseWorkern och sedan fortsätta hantera loggar utan att påverka LogServer-actorn. Detta åstakommer vi genom att sätta en *supervisionStrategy* i LogServer-actorn som är DatabaseWorkern:s parent actor:
+```scala
+override val supervisorStrategy = OneForOneStrategy() {
+  case d: DatabaseFailureException => Restart
+}
+```
 
-Vi vill dels sätta en strategi på servern om att DatabaseWorkern ska startas om varje gång ett DatabaseFailureException kasats genom att ange en `supervisionStrategy`.
-
-Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer.
+Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
 
 Använd följande kommando för att verifiera att LogAgent skickar om meddelanden inom fem sekunder:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
@@ -126,7 +129,7 @@ Använd följande kommando för att verifiera att LogAgent skickar om meddelande
 Uppgift 5: Räkna inte omsändningar av logg-meddelanden
 ---------------------
 
-Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste hanteras "idempotent", alltså varje loggmeddelande får bara räknas en gång. Utgå ifrån att ett loggmeddelandes nyckel [hostnamn + id] är unikt.
+Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste så att StatusCountern tar hänsyn till om samma loggmeddelande kommer in igen och räkna upp igen om detta sker. Utgå ifrån att ett loggmeddelandes *hostname* tillsammans med *id* (löpnummer) är unikt.
 
 Använd följande kommando för att verifiera att StatusCountern nu inte räknar upp samma loggmeddelande två gånger:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterIdempotentSuite'`
