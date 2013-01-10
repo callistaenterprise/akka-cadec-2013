@@ -57,12 +57,12 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
 ### 1. Uppdatera LogServer-agenten
-1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)
+1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala))
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
-    * Success om HTTP-status är 200
-    * ClientError om HTTP-status är 400-499
-    * ServerError om HTTP-status är över 500
+    1. Success om HTTP-status är 200
+    2. ClientError om HTTP-status är 400-499
+    3. ServerError om HTTP-status är över 500
 
 ### 2. Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
@@ -92,6 +92,8 @@ Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då data
 1.  Ta emot LogMessage objekt
 2.  Spara logg-meddelanden(LogMessage) till databasen
 3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
+
+DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala)
 
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
