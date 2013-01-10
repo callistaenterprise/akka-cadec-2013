@@ -15,7 +15,7 @@ Första uppgiften går ut på att få upp ett flöde där en agent på en webbse
 ### 1. Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
 2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg.
-3.  Skapar ett nytt LogMessage-objekt med löpnummer, accesslog-objekt och hostname
+3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet
 4.  Skicka LogMessage-objektet till server-actorn
 
 LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent/LogAgent.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/agent/src/main/scala/se/callista/loganalyzer/agent/LogAgent.scala)
@@ -23,10 +23,10 @@ LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent
 Använd följande kommando för att verifiera att LogAgent fungerar enligt kraven ovan:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
 
-### 2. Updatera LogServer-actorn
+### 2. Uppdatera LogServer-actorn
 
 1.  Ta emot LogMessage-objekt
-2.  Skriver ut en logg om att den tagit emot objektet.
+2.  Skriv ut en logg om att objektet är mottaget (loggning görs med `log.info(...)`)
 
 LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala)
 
