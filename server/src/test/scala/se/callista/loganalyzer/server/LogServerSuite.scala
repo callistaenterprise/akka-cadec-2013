@@ -29,7 +29,7 @@ class LogServerSuite(_system: ActorSystem) extends TestKit(_system)
   
   test("handle LogMessage objects") {
     val id = 1
-    val accessLog = AccessLog("127.0.0.1", new Date, "GET", "/", Random.nextInt(400)+200, 10)
+    val accessLog = AccessLog("127.0.0.1", new Date, "GET", "/", 200, 10)
     val logMessage = LogMessage("hostname", id, accessLog)
 
     system.eventStream.subscribe(testActor, classOf[UnhandledMessage])
