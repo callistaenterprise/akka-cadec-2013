@@ -63,9 +63,7 @@ class LogAgent(hostname: String, server: ActorRef) extends Actor with ActorLoggi
   
   def handleUnprocessedLogs() {
     log.info("Resend unprocessed logs: {}", logs.keys.mkString(", "))
-    logs.keys.foreach { k => server ! LogMessage(host, k, logs(k)) }
-    // alt2: logs.foreach { case (k, v) => server ! LogMessage(host, k, v) }
-    // alt3: for ((k, v) <- logs) { server ! LogMessage(host, k, v) }
+    logs.foreach { case (k, v) => sendLog(k, v) }
   }
   
 }
