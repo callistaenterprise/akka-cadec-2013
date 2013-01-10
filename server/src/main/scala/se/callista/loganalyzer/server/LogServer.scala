@@ -37,6 +37,7 @@ class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
     case LogMessage(_, _, a: AccessLog) if(a.statusCode == 200) => successCounter ! logMessage
     case LogMessage(_, _, a: AccessLog) if(a.statusCode >= 400 && a.statusCode < 500) => clientErrorCounter ! logMessage
     case LogMessage(_, _, a: AccessLog) if(a.statusCode >= 500) => serverErrorCounter ! logMessage
+    case _ => // alla andra fall ska ignoreras
   }
   
 }
