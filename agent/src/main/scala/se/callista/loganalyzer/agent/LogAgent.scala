@@ -14,7 +14,7 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
  *    Tips: 
  *      - Då meddelanden hanteras seriellt i en actor behöver man inte
  *        oroa sig för att göra variabler trådsäkra, de kan alltså vara "mutable".
- *      - i++ fungerar inte i skala, använd 'i += 1' eller i = 'i + 1'
+ *      - i++ fungerar inte i skala, använd 'i += 1' eller 'i = i + 1'
  * 3. Skicka logg-meddelandet till servern
  * 
  * UPPGIFT 4:
