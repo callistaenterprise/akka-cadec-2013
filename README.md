@@ -46,7 +46,7 @@ Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/
 Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera i terminalen på för servern att meddelanden kommer fram.
 
 
-Uppgift 2: Räkna antal loggar beroende på HTTP Status
+Uppgift 2: Räkna antal anrop beroende på HTTP Status
 ---------------------
 
 I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html) som varje anrop har. 
@@ -83,7 +83,7 @@ Starta återigen servern med: `server/target/start` (windows: )
 Gå in på [localhost:8080](http://localhost:8080) och verifiera att siffrorna räknar upp
 
 
-Uppgift 3: Spara logg-meddelanden till databasen:
+Uppgift 3: Spara logg-meddelanden till databasen
 ---------------------
 
 Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då databasen är något instabil och ibland returnerar exceptions vill vi inte att server-actorn själv ska spara meddelandena utan låta en egen actor, DatabaseWorker, ta hand om det något riskfyllda jobbet. 
@@ -115,14 +115,11 @@ På agent-sidan vill vi köra strategin "let it crash", alltså om databasen ret
 
 Vi vill dels sätta en strategi på servern om att DatabaseWorkern ska startas om varje gång ett DatabaseFailureException kasats genom att ange en `supervisionStrategy`.
 
-Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om loggmeddelanden. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer.
+Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer.
 
 Använd följande kommando för att verifiera att LogAgent skickar om meddelanden inom fem sekunder:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
 
-
-
----
 
 Uppgift 5: Räkna inte omsändningar av logg-meddelanden
 ---------------------
@@ -133,4 +130,5 @@ Använd följande kommando för att verifiera att StatusCountern nu inte räknar
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterIdempotentSuite'`
 
 
-
+---
+*Tutorialen är skapad av Albert Örwall och Pär Wenåker för Cadec 2013 som arrangeras av [Callista Enterprise AB](http://callistaenterprise.se/).*
