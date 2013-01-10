@@ -5,7 +5,9 @@ I denna tutorial kommer vi bygga ett enkelt system för central analys av loggar
 
 Tutorial är uppbyggd så att infrastukturen finns på plats, men logik måste skapas för de actors som ska användas.
 
-Instruktioner för att sätta upp en utvecklingsmiljö finns [här].
+Instruktioner för att sätta upp en utvecklingsmiljö finns [här](https://github.com/callistaenterprise/akka-cadec-2013/wiki/Installationsanvisningar).
+
+[Lathund för Scala och Akka](https://github.com/callistaenterprise/akka-cadec-2013/wiki/Scala-och-Akka-101)
 
 Uppgift 1: Skicka logg-meddelanden från en agent till en server
 ---------------------
