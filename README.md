@@ -120,7 +120,7 @@ override val supervisorStrategy = OneForOneStrategy() {
 }
 ```
 
-Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
+Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vill vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
 
 Tips på lösning:
 * Alla loggmeddelanden som skickas kan läggas till i en Map med löpnumret som nyckel. När sedan ett ConfirmationMessage kommer in kan man plocka bort loggen.
