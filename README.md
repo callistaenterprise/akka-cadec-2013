@@ -91,9 +91,9 @@ Uppgift 3: Spara logg-meddelanden till databasen
 Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då databasen är något instabil och ibland returnerar exceptions vill vi inte att server-actorn själv ska spara meddelandena utan låta en egen actor, DatabaseWorker, ta hand om det något riskfyllda jobbet. 
 
 ### Uppdatera DatabaseWorker
-1.  Ta emot LogMessage objekt
-2.  Spara logg-meddelanden(LogMessage) till databasen
-3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
+1.  Ta emot LogMessage objekt 
+2.  Spara logg-meddelanden(LogMessage) till databasen. `database.save([hostname], [löpnummer], [AccessLog])`
+3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet. `sender ! ConfirmationMessage([löpnummer])`
 
 DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala)
 
@@ -101,8 +101,8 @@ Använd följande kommando för att verifiera att DatabaseWorkern fungerar som f
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
 ### Uppdatera LogServer
-1.  Skapa en DatabaseWorker-actor
-2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn
+1.  Skapa en DatabaseWorker-actor. `val databaseWorker = context.actorOf(Props[DatabaseWorker], "databaseWorker")`
+2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn `databaseWorker.forward([LogMessage])`
 
 ### Testa hela flödet
 Kompilera om och starta server och agent igen. 
