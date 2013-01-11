@@ -126,7 +126,7 @@ Använd följande kommando för att verifiera att LogAgent skickar om meddelande
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
 
 
-Uppgift 5: Räkna inte omsändningar av logg-meddelanden
+(Extra) Uppgift 5: Räkna inte omsändningar av logg-meddelanden
 ---------------------
 
 Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste så att StatusCountern tar hänsyn till om samma loggmeddelande kommer in igen och räkna upp igen om detta sker. Utgå ifrån att ett loggmeddelandes *hostname* tillsammans med *id* (löpnummer) är unikt.
