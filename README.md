@@ -122,6 +122,13 @@ override val supervisorStrategy = OneForOneStrategy() {
 
 Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
 
+Tips på lösning:
+* Alla loggmeddelanden som skickas kan läggas till i en Map med löpnumret som nyckel. När sedan ett ConfirmationMessage kommer in kan man plocka bort loggen.
+* Ett schemalagt jobb kan sättas upp med hjälp av en scheduler som skickar meddelanden till actorn inom ett visst tidsintervall för att trigga omsändning av loggar: ```scala
+  context.system.scheduler.schedule(2 seconds, 2 seconds, self, HandleUnprocessedLogs)
+```
+
+
 Använd följande kommando för att verifiera att LogAgent skickar om meddelanden inom fem sekunder:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
 
