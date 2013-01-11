@@ -14,7 +14,17 @@ Uppgift 1: Skicka logg-meddelanden från en agent till en server
 
 Första uppgiften går ut på att få upp ett flöde där en agent på en webbserver scannar loggar och skickar logg-objekt vidare till en server. Med hjälp av Akka kan detta ske helt utan att agent-actorn behöver veta var servern befinner sig utan agenten har bara en referens (ActorRef) till server-actorn.
 
-### 1. Uppdatera LogAgent-actorn
+### Uppdatera LogServer-actorn
+
+1.  Ta emot LogMessage-objekt
+2.  Skriv ut en logg om att objektet är mottaget (loggning görs med `log.info(...)`)
+
+LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala)
+
+Använd följande kommando för att verifiera att LogServer tar emot LogMessage-objekt:
+`sbt 'server/test-only se.callista.loganalyzer.server.LogServerSuite'`
+
+### Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
 2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg.
 3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet
@@ -24,16 +34,6 @@ LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent
 
 Använd följande kommando för att verifiera att LogAgent fungerar enligt kraven ovan:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
-
-### 2. Uppdatera LogServer-actorn
-
-1.  Ta emot LogMessage-objekt
-2.  Skriv ut en logg om att objektet är mottaget (loggning görs med `log.info(...)`)
-
-LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala)
-
-Använd följande kommando för att verifiera att LogServer tar emot LogMessage-objekt:
-`sbt 'server/test-only se.callista.loganalyzer.server.LogServerSuite'`
 
 ### 3. Testa hela flödet
 
@@ -58,7 +58,7 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
-### 1. Uppdatera LogServer-agenten
+### Uppdatera LogServer-agenten
 1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala))
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
@@ -66,7 +66,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
     2. ClientError om HTTP-status är 400-499
     3. ServerError om HTTP-status är över 500
 
-### 2. Uppdatera StatusCounter
+### Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
 2.  Räkna upp med ett varje gång en logg kommer in
 3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt och skicka till presenter-actorn
@@ -90,7 +90,7 @@ Uppgift 3: Spara logg-meddelanden till databasen
 
 Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då databasen är något instabil och ibland returnerar exceptions vill vi inte att server-actorn själv ska spara meddelandena utan låta en egen actor, DatabaseWorker, ta hand om det något riskfyllda jobbet. 
 
-### 1. Uppdatera DatabaseWorker
+### Uppdatera DatabaseWorker
 1.  Ta emot LogMessage objekt
 2.  Spara logg-meddelanden(LogMessage) till databasen
 3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
@@ -100,11 +100,11 @@ DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyze
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
-### 2. Uppdatera LogServer
+### Uppdatera LogServer
 1.  Skapa en DatabaseWorker-actor
 2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn
 
-### 3. Testa hela flödet
+### Testa hela flödet
 Kompilera om och starta server och agent igen. 
 
 Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras.
