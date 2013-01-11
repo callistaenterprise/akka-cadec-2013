@@ -35,7 +35,7 @@ LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent
 Använd följande kommando för att verifiera att LogAgent fungerar enligt kraven ovan:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
 
-### 3. Testa hela flödet
+### Testa hela flödet
 
 Skapa först start-script genom att köra kommandot: `sbt start-script`
 
@@ -58,7 +58,7 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
-### Uppdatera LogServer-agenten
+### Uppdatera LogServer-actorn
 1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala))
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
@@ -74,7 +74,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
  
-### 3. Testa hela flödet
+### Testa hela flödet
 
 Kompilera genom att köra kommandot: `sbt compile`
 
