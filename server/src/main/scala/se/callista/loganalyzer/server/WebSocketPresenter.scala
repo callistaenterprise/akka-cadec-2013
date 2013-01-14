@@ -2,8 +2,7 @@ package se.callista.loganalyzer.server
 
 import scala.collection.mutable.Map
 import akka.actor.Actor
-import se.callista.loganalyzer.Count
-import se.callista.loganalyzer.HttpStatus
+import se.callista.loganalyzer.{Count, HttpStatus}
 import unfiltered.netty.websockets.WebSocket
 
 /**
