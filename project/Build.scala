@@ -3,6 +3,7 @@ import sbt.Keys._
 import com.typesafe.sbt.SbtStartScript
 import com.typesafe.sbtscalariform.ScalariformPlugin
 import com.typesafe.sbtscalariform.ScalariformPlugin.ScalariformKeys
+import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 
 object LogAnalyzerBuild extends Build {
   val Organization = "logAnalyzer"
@@ -49,7 +50,9 @@ object LogAnalyzerBuild extends Build {
     javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
 
     // disable parallel tests
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+
+    EclipseKeys.withSource := true
   )
 
 }
