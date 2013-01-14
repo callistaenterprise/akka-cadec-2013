@@ -6,7 +6,10 @@ import akka.actor.{Actor, ActorRef, ActorLogging}
 import akka.util.duration._
 import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, HandleUnprocessedLogs}
 
-class LogAgent(hostname: String, server: ActorRef) extends Actor with ActorLogging {
+class LogAgent(
+    val hostname: String, // hostname of the agent
+    val server: ActorRef // actor reference to the log service
+  ) extends Actor with ActorLogging {
 
   var sequence = 0
   

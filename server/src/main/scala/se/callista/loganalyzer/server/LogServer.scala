@@ -4,7 +4,9 @@ import akka.actor._
 import akka.actor.SupervisorStrategy.Restart
 import se.callista.loganalyzer._
 
-class LogServer(presenter: ActorRef) extends Actor with ActorLogging {
+class LogServer(
+    val presenter: ActorRef // actor reference to the presenter
+  ) extends Actor with ActorLogging {
   
   def receive = {
     case logMessage: LogMessage => {
