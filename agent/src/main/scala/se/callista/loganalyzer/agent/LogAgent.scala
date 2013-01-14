@@ -24,10 +24,8 @@ class LogAgent(
   
   def processLog (log: AccessLog) {
     sequence += 1
-    val id = sequence 
-    logs += id -> log
-
-    sendLog(id, log) 
+    logs += sequence -> log
+    sendLog(sequence, log) 
   }
   
   def sendLog(id: Int, log: AccessLog) {
