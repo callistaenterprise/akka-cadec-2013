@@ -16,9 +16,7 @@ class LogAgent(hostname: String, server: ActorRef) extends Actor with ActorLoggi
   
   def processLog (log: AccessLog) {
     sequence += 1
-    val id = sequence 
-    
-    sendLog(id, log) 
+    sendLog(sequence , log) 
   }
   
   def sendLog(id: Int, log: AccessLog) {
