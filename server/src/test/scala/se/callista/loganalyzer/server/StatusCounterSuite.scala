@@ -32,5 +32,5 @@ class StatusCounterSuite(_system: ActorSystem) extends TestKit(_system)
     actor ! LogMessage("hostname", 2, accessLog)
     probe.expectMsg(1 second, Count(Success, 2))
   }
-
+  
 }
