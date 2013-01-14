@@ -27,7 +27,7 @@ class LogAgentResendSuite(_system: ActorSystem) extends TestKit(_system)
     system.shutdown()
   }
   
-  test("resend messages that are not handled the log server") {
+  test("resend messages that are not handled by the log server") {
     val accessLog = AccessLog("127.0.0.1", new Date(), "GET", "/", Random.nextInt(400)+200, 10)
     
     val probe = TestProbe()
@@ -43,7 +43,7 @@ class LogAgentResendSuite(_system: ActorSystem) extends TestKit(_system)
     }
   }
   
-  test("don't resend messages that are not handled the log server") {
+  test("don't resend messages that are not by handled the log server") {
     val accessLog = AccessLog("127.0.0.1", new Date(), "GET", "/", Random.nextInt(400)+200, 10)
     
     val probe = TestProbe()

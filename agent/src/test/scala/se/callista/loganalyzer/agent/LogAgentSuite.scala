@@ -12,10 +12,11 @@ import se.callista.loganalyzer.{AccessLog, LogMessage}
 import akka.testkit.TestActorRef
 import akka.actor.UnhandledMessage
 import java.util.Date
+import org.scalatest.matchers.MustMatchers
 
 @RunWith(classOf[JUnitRunner])
 class LogAgentSuite(_system: ActorSystem) extends TestKit(_system) 
-  with FunSuite with BeforeAndAfterAll {
+  with FunSuite with BeforeAndAfterAll with MustMatchers {
   
   def this() = this(ActorSystem("LogAgentSuite", ConfigFactory.parseString("")))
 
@@ -47,23 +48,23 @@ class LogAgentSuite(_system: ActorSystem) extends TestKit(_system)
     }
   }
   
-  test("set correct sequence numbers (1..n) on log messages") {
+  test("set correct sequence numbers (x, x+1, x+2, .., x+n) on log messages") {
     val accessLog = AccessLog("127.0.0.1", new Date(), "GET", "/", Random.nextInt(400)+200, 10)
     
     val probe = TestProbe()
     val actor = system.actorOf(Props(new LogAgent("host", probe.ref)))
     actor ! accessLog
-    probe.expectMsgPF(500 millis) {
-      case LogMessage(_, 1, accessLog) => // success
-      case LogMessage(_, x, _) => fail("the id should be 1 on the first log message, but was " + x)
+    val first = probe.expectMsgPF(500 millis) {
+      case LogMessage(_, x, a: AccessLog) => x
       case x => fail("Wrong type. Should be LogMessage, but was: " + x)
     }
     actor ! accessLog
-    probe.expectMsgPF(500 millis) {
-      case LogMessage(_, 2, accessLog) => // success
-      case LogMessage(_, x, _) => fail("the id should be 2 on the second log message, but was " + x)
+    val second = probe.expectMsgPF(500 millis) {
+      case LogMessage(_, x, a: AccessLog) => x
       case x => fail("Wrong type. Should be LogMessage, but was: " + x)
     }
+    
+    second must be (first+1)
   }
 
 }
