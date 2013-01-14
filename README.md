@@ -14,7 +14,17 @@ Uppgift 1: Skicka logg-meddelanden från en agent till en server
 
 Första uppgiften går ut på att få upp ett flöde där en agent på en webbserver scannar loggar och skickar logg-objekt vidare till en server. Med hjälp av Akka kan detta ske helt utan att agent-actorn behöver veta var servern befinner sig utan agenten har bara en referens (ActorRef) till server-actorn.
 
-### 1. Uppdatera LogAgent-actorn
+### Uppdatera LogServer-actorn
+
+1.  Ta emot LogMessage-objekt
+2.  Skriv ut en logg om att objektet är mottaget (loggning görs med `log.info(...)`)
+
+LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala)
+
+Använd följande kommando för att verifiera att LogServer tar emot LogMessage-objekt:
+`sbt 'server/test-only se.callista.loganalyzer.server.LogServerSuite'`
+
+### Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
 2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg.
 3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet
@@ -25,17 +35,7 @@ LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent
 Använd följande kommando för att verifiera att LogAgent fungerar enligt kraven ovan:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
 
-### 2. Uppdatera LogServer-actorn
-
-1.  Ta emot LogMessage-objekt
-2.  Skriv ut en logg om att objektet är mottaget (loggning görs med `log.info(...)`)
-
-LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/LogServer.scala)
-
-Använd följande kommando för att verifiera att LogServer tar emot LogMessage-objekt:
-`sbt 'server/test-only se.callista.loganalyzer.server.LogServerSuite'`
-
-### 3. Testa hela flödet
+### Testa hela flödet
 
 Skapa först start-script genom att köra kommandot: `sbt start-script`
 
@@ -58,7 +58,7 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
-### 1. Uppdatera LogServer-agenten
+### Uppdatera LogServer-actorn
 1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala))
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
@@ -66,7 +66,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
     2. ClientError om HTTP-status är 400-499
     3. ServerError om HTTP-status är över 500
 
-### 2. Uppdatera StatusCounter
+### Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
 2.  Räkna upp med ett varje gång en logg kommer in
 3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt och skicka till presenter-actorn
@@ -74,7 +74,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
  
-### 3. Testa hela flödet
+### Testa hela flödet
 
 Kompilera genom att köra kommandot: `sbt compile`
 
@@ -90,21 +90,21 @@ Uppgift 3: Spara logg-meddelanden till databasen
 
 Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då databasen är något instabil och ibland returnerar exceptions vill vi inte att server-actorn själv ska spara meddelandena utan låta en egen actor, DatabaseWorker, ta hand om det något riskfyllda jobbet. 
 
-### 1. Uppdatera DatabaseWorker
-1.  Ta emot LogMessage objekt
-2.  Spara logg-meddelanden(LogMessage) till databasen
-3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet
+### Uppdatera DatabaseWorker
+1.  Ta emot LogMessage objekt 
+2.  Spara logg-meddelanden(LogMessage) till databasen. `database.save([hostname], [löpnummer], [AccessLog])`
+3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet. `sender ! ConfirmationMessage([löpnummer])`
 
 DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala)
 
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
-### 2. Uppdatera LogServer
-1.  Skapa en DatabaseWorker-actor
-2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn
+### Uppdatera LogServer
+1.  Skapa en DatabaseWorker-actor. `val databaseWorker = context.actorOf(Props[DatabaseWorker], "databaseWorker")`
+2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn `databaseWorker.forward([LogMessage])`
 
-### 3. Testa hela flödet
+### Testa hela flödet
 Kompilera om och starta server och agent igen. 
 
 Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras.
@@ -120,16 +120,24 @@ override val supervisorStrategy = OneForOneStrategy() {
 }
 ```
 
-Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
+Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vill vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
+
+Tips på lösning:
+* Alla loggmeddelanden som skickas kan läggas till i en Map med löpnumret som nyckel. När sedan ett ConfirmationMessage kommer in kan man plocka bort loggen.
+* Ett schemalagt jobb kan sättas upp med hjälp av en scheduler som skickar meddelanden till actorn inom ett visst tidsintervall för att trigga omsändning av loggar: 
+
+```scala
+  context.system.scheduler.schedule(2 seconds, 2 seconds, self, HandleUnprocessedLogs)
+```
 
 Använd följande kommando för att verifiera att LogAgent skickar om meddelanden inom fem sekunder:
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentResendSuite'`
 
 
-Uppgift 5: Räkna inte omsändningar av logg-meddelanden
+(Extra) Uppgift 5: Räkna inte omsändningar av logg-meddelanden
 ---------------------
 
-Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste så att StatusCountern tar hänsyn till om samma loggmeddelande kommer in igen och räkna upp igen om detta sker. Utgå ifrån att ett loggmeddelandes *hostname* tillsammans med *id* (löpnummer) är unikt.
+Varje gång ett logg-meddelande skickas kommer nu StatusCountern att räkna upp ett steg till. Detta måste så att StatusCountern tar hänsyn till om samma loggmeddelande kommer in igen och inte räkna upp igen om detta sker. Utgå ifrån att ett loggmeddelandes *hostname* tillsammans med *id* (löpnummer) är unikt.
 
 Använd följande kommando för att verifiera att StatusCountern nu inte räknar upp samma loggmeddelande två gånger:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterIdempotentSuite'`

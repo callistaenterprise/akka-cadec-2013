@@ -22,7 +22,7 @@ abstract class Database {
   def latestTwenty: Seq[AccessLog] = {
    (for( (_,keys) <- timeline.takeRight(20); key <- keys) yield logs(key) ).toList.take(20)
   }
-} 
+}
 
 object StableDatabase extends Database 
 
