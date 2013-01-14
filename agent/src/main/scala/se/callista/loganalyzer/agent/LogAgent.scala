@@ -9,7 +9,7 @@ import se.callista.loganalyzer.{AccessLog, ConfirmationMessage, LogMessage, Hand
 class LogAgent(hostname: String, server: ActorRef) extends Actor with ActorLogging {
 
   def receive = {
-    case None => //ersätt denna rad med en korrekt pattern matching
+    case None => // replace this row
   }
   
 }
