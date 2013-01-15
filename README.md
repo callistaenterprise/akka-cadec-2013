@@ -24,6 +24,24 @@ LogServer-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/ser
 Använd följande kommando för att verifiera att LogServer tar emot LogMessage-objekt:
 `sbt 'server/test-only se.callista.loganalyzer.server.LogServerSuite'`
 
+### Start-scripts
+
+#### Generera startscripts
+
+##### Windows
+Startskripten för Windows finns i projektet med namnen `start_server.bat` och `start_agent.bat`, men behöver editeras. Uppdatera USER_HOME och PROJECT_HOME, så att de pekar  på din hemkatalog, resp var du har checkat ut projektet
+
+##### Linux/Mac
+Kör kommandot: `sbt start-script` och följande två script ska genereras: `server/target/start` och `agent/target/start` 
+
+#### Starta server och agent
+
+Kompilera koden med kommandot: `sbt compile` 
+
+Starta sedan servern i ett terminal-fönster med kommandot: `server/target/start` för Linux/Mac och `start_server.bat` för Windows.
+
+Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/start` för Linux/Mac och `start_agent.bat` för Windows.
+
 ### Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
 2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg (i++ fungerar inte i scala, använd `i += 1` eller `i = i + 1`)
@@ -36,16 +54,10 @@ Använd följande kommando för att verifiera att LogAgent fungerar enligt krave
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
 
 ### Testa hela flödet
-    Startskript för Windows behöver editeras. Uppdatera USER_HOME och PROJECT_HOME, så att de pekar 
-    på din hemkatalog, resp var du har checkat ut projektet
-
-Skapa först start-script genom att köra kommandot: `sbt start-script`
-
+    
 Kompilera koden med kommandot: `sbt compile` 
 
-Starta sedan servern i ett terminal-fönster med kommandot: `server/target/start` (windows: `start_server.bat`)
-
-Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/start` (windows: `start_agent.bat`)
+Starta servern och sedan agenten med start-scripten.
 
 Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera i terminalen på för servern att meddelanden kommer fram.
 
