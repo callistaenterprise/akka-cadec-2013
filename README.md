@@ -26,7 +26,7 @@ Använd följande kommando för att verifiera att LogServer tar emot LogMessage-
 
 ### Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
-2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg (i++ fungerar inte i scala, använd 'i += 1' eller 'i = i + 1')
+2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg (i++ fungerar inte i scala, använd `i += 1` eller `i = i + 1`)
 3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet 
 4.  Skicka LogMessage-objektet till server-actorn
 
