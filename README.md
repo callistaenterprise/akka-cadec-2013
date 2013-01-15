@@ -26,8 +26,8 @@ Använd följande kommando för att verifiera att LogServer tar emot LogMessage-
 
 ### Uppdatera LogAgent-actorn
 1.  Ta emot AccessLog-objekt
-2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg.
-3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet
+2.  Generera ett löpnummer. Börja på 1 och plussa på ett för varje ny logg (i++ fungerar inte i scala, använd 'i += 1' eller 'i = i + 1')
+3.  Skapar ett nytt LogMessage-objekt med löpnummer, hostname och AccessLog-objektet 
 4.  Skicka LogMessage-objektet till server-actorn
 
 LogAgent-actorn finns under: [agent/src/main/scala/se/callista/loganalyzer/agent/LogAgent.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/agent/src/main/scala/se/callista/loganalyzer/agent/LogAgent.scala)
@@ -41,9 +41,9 @@ Skapa först start-script genom att köra kommandot: `sbt start-script`
 
 Kompilera koden med kommandot: `sbt compile` 
 
-Starta sedan servern i ett terminal-fönster med kommandot: `server/target/start` (windows: )
+Starta sedan servern i ett terminal-fönster med kommandot: `server/target/start` (windows: `start_server.bat`)
 
-Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/start` (windows: )
+Starta sedan agenten i ett annat terminal-fönster med kommandot: `agent/target/start` (windows: `start_agent.bat`)
 
 Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera i terminalen på för servern att meddelanden kommer fram.
 
@@ -59,17 +59,17 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
 ### Uppdatera LogServer-actorn
-1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala))
+1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/HttpStatus.scala)). Skapa ny actor med `context.actorOf(Props(new MyActor(p1, p2)), "childActorName")`
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
-    1. Success om HTTP-status är 200
+    1. Success om HTTP-status är under 400
     2. ClientError om HTTP-status är 400-499
     3. ServerError om HTTP-status är över 500
 
 ### Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
 2.  Räkna upp med ett varje gång en logg kommer in
-3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt och skicka till presenter-actorn
+3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt och skicka nuvarande antal anrop till presenter-actorn
 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
@@ -93,7 +93,7 @@ Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då data
 ### Uppdatera DatabaseWorker
 1.  Ta emot LogMessage objekt 
 2.  Spara logg-meddelanden(LogMessage) till databasen. `database.save([hostname], [löpnummer], [AccessLog])`
-3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet. `sender ! ConfirmationMessage([löpnummer])`
+3.  Skicka tillbaks ett bekräftelsemeddelande (ConfirmationMessage) med löpnumret (id) till actorn som skickade meddelandet (actor-referens: `sender`)
 
 DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/DatabaseWorker.scala)
 
@@ -101,8 +101,8 @@ Använd följande kommando för att verifiera att DatabaseWorkern fungerar som f
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
 ### Uppdatera LogServer
-1.  Skapa en DatabaseWorker-actor. `val databaseWorker = context.actorOf(Props[DatabaseWorker], "databaseWorker")`
-2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn `databaseWorker.forward([LogMessage])`
+1.  Skapa en DatabaseWorker-actor. 
+2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn. Använd `actorReferens.forward([meddelande])` för att vidarebefordra meddelande och behålla referens till actorn som skickade meddelandet från början.
 
 ### Testa hela flödet
 Kompilera om och starta server och agent igen. 
@@ -120,10 +120,25 @@ override val supervisorStrategy = OneForOneStrategy() {
 }
 ```
 
-Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vill vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. 
+Om fel uppstår i databasen på serversidan eller om loggmeddelanden försvinner på väg till servern vill vi på agent-sidan ha möjlighet att skicka om dessa. Detta kan göras genom att inom en viss tidsperiod kontrollera om ett bekräftelsemeddelande (ConfirmationMessage) för ett loggmeddelande inkommit från servern. Om detta inte skett, skicka om loggmeddelandet med samma löpnummer. Vi vill att alla meddelanden ska skickas **minst** en gång ( *at-least-once* ) . 
 
 Tips på lösning:
 * Alla loggmeddelanden som skickas kan läggas till i en Map med löpnumret som nyckel. När sedan ett ConfirmationMessage kommer in kan man plocka bort loggen.
+
+```scala
+// skapa (mutable) map
+val map = Map[Int, String]()
+
+// lägg till
+map += 1 -> "value"
+
+// ta bort
+map -= 1
+
+// iterera igenom en map och kör en funktion med varje nyckel och värde 
+map.foreach { case (key, value) => funktion(key, value) }
+```
+
 * Ett schemalagt jobb kan sättas upp med hjälp av en scheduler som skickar meddelanden till actorn inom ett visst tidsintervall för att trigga omsändning av loggar: 
 
 ```scala
