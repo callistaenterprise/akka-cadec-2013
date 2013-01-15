@@ -36,6 +36,8 @@ Använd följande kommando för att verifiera att LogAgent fungerar enligt krave
 `sbt 'agent/test-only se.callista.loganalyzer.agent.LogAgentSuite'`
 
 ### Testa hela flödet
+    Startskript för Windows behöver editeras. Uppdatera USER_HOME och PROJECT_HOME, så att de pekar 
+    på din hemkatalog, resp var du har checkat ut projektet
 
 Skapa först start-script genom att köra kommandot: `sbt start-script`
 
@@ -75,12 +77,11 @@ Använd följande kommando för att verifiera att StatusCountern fungerar:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
  
 ### Testa hela flödet
-
 Kompilera genom att köra kommandot: `sbt compile`
 
-Starta återigen servern med: `server/target/start` (windows: )
+Starta återigen servern med: `server/target/start` (windows: `start_server.bat`)
 
-...och agenten med: `agent/target/start` (windows: )
+...och agenten med: `agent/target/start` (windows: kör `start_agent.bat`)
 
 Gå in på [localhost:8080](http://localhost:8080) och verifiera att siffrorna räknar upp
 
