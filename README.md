@@ -59,7 +59,7 @@ Kompilera koden med kommandot: `sbt compile`
 
 Starta servern och sedan agenten med start-scripten.
 
-Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera i terminalen på för servern att meddelanden kommer fram.
+Agenten ska nu skicka logg-meddelanden över nätverket till servern där meddelanden ska visas i ett terminalfönster. Verifiera att meddelanden loggas från servern.
 
 
 Uppgift 2: Räkna antal anrop beroende på HTTP Status
