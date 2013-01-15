@@ -29,10 +29,10 @@ Använd följande kommando för att verifiera att LogServer tar emot LogMessage-
 #### Generera startscripts
 
 ##### Windows
-Startskripten för Windows finns i projektet med namnen `start_server.bat` och `start_agent.bat`, men behöver editeras. Uppdatera USER_HOME och PROJECT_HOME, så att de pekar  på din hemkatalog, resp var du har checkat ut projektet
+Startskripten för Windows finns i rot-katalogen för projektet med namnen `start_server.bat` och `start_agent.bat` men behöver editeras. Uppdatera USER_HOME och PROJECT_HOME, så att de pekar  på din hemkatalog, resp var du har checkat ut projektet
 
 ##### Linux/Mac
-Kör kommandot: `sbt start-script` och följande två script ska genereras: `server/target/start` och `agent/target/start` 
+Kör kommandot: `sbt start-script` och scripten `server/target/start` och `agent/target/start` ska ha genererats.
 
 #### Starta server och agent
 
