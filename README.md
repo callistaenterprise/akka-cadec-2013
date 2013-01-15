@@ -73,7 +73,7 @@ I AccessLog-objektet anges den [HTTP Status](http://www.w3.org/Protocols/rfc2616
 För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard som visar hur många lyckade anrop, felaktiga och misslyckade som gjorts. Detta kan åstakommas genom sätta upp actors som räknar varje typ av status.
 
 ### Uppdatera LogServer-actorn
-1.  Skapa [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/HttpStatus.scala)). Skapa ny actor med `context.actorOf(Props(new MyActor(p1, p2)), "childActorName")`
+1.  Skapa tre [StatusCounter](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/server/src/main/scala/se/callista/loganalyzer/server/StatusCounter.scala)-actors, en för varje typ av HTTP-status ([Success, ClientError och ServerError](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/HttpStatus.scala)). En actor skapar man med `context.actorOf(Props(new MyActor(p1, p2)), "childActorName")`
 2.  Skicka logg-meddelandet till rätt StatusCounter beroende på HTTP-status:
 
     1. Success om HTTP-status är under 400
@@ -83,7 +83,7 @@ För att se hur väl våra webbservrar fungerar vill vi sätta upp en dashboard 
 ### Uppdatera StatusCounter
 1.  Ta emot LogMessage objekt
 2.  Räkna upp med ett varje gång en logg kommer in
-3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt och skicka nuvarande antal anrop till presenter-actorn
+3.  Skapa ett [Count](https://github.com/callistaenterprise/akka-cadec-2013/blob/master/common/src/main/scala/se/callista/loganalyzer/Count.scala)-objekt med nuvarande antal anrop och skicka detta till presenter-actorn.
 
 Använd följande kommando för att verifiera att StatusCountern fungerar:
 `sbt 'server/test-only se.callista.loganalyzer.server.StatusCounterSuite'`
@@ -103,6 +103,10 @@ Uppgift 3: Spara logg-meddelanden till databasen
 
 Vi kommer i detta steg spara ner alla logg-meddelanden till en databas. Då databasen är något instabil och ibland returnerar exceptions vill vi inte att server-actorn själv ska spara meddelandena utan låta en egen actor, DatabaseWorker, ta hand om det något riskfyllda jobbet. 
 
+### Uppdatera LogServer
+1.  Skapa en DatabaseWorker-actor. 
+2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn. Använd `actorReferens.forward([meddelande])` för att vidarebefordra meddelande och behålla referens till actorn som skickade meddelandet från början.
+
 ### Uppdatera DatabaseWorker
 1.  Ta emot LogMessage objekt 
 2.  Spara logg-meddelanden(LogMessage) till databasen. `database.save([hostname], [löpnummer], [AccessLog])`
@@ -113,14 +117,10 @@ DatabaseWorker-actorn finns under: [server/src/main/scala/se/callista/loganalyze
 Använd följande kommando för att verifiera att DatabaseWorkern fungerar som förväntat:
 `sbt 'server/test-only se.callista.loganalyzer.server.DatabaseWorkerSuite'`
 
-### Uppdatera LogServer
-1.  Skapa en DatabaseWorker-actor. 
-2.  Forwarda alla logg-meddelanden till DatabaseWorker-actorn. Använd `actorReferens.forward([meddelande])` för att vidarebefordra meddelande och behålla referens till actorn som skickade meddelandet från början.
-
 ### Testa hela flödet
 Kompilera om och starta server och agent igen. 
 
-Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att se att logglistan uppdateras.
+Gå in på [localhost:8080/logs](http://localhost:8080/logs) för att verifiera att logglistan uppdateras.
 
 Uppgift 4: Hantera fel
 ---------------------
