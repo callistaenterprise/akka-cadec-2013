@@ -23,7 +23,7 @@ class StatusCounterSuite(_system: ActorSystem) extends TestKit(_system)
   }
   
   test("StatusCounter should count logs and send value to presenter when a log message arrives") {
-    val accessLog = AccessLog("127.0.0.1", new Date, "GET", "/", Random.nextInt(400)+200, 10)
+    val accessLog = AccessLog("127.0.0.1", new Date, "GET", "/", 200, 10)
     
     val probe = TestProbe()
     val actor = TestActorRef(new StatusCounter(Success, probe.ref))
